@@ -14,14 +14,47 @@ describe('Customers', () => {
     });
     it('should be able to get a customer from the database', (done) => {
         let myCustomer = new Customer();
-        myCustomer
+        Customer
             .get(1)
-            .then((result) => {
-                console.log(myCustomer.name);
-                console.log(myCustomer.email);
-                console.log(myCustomer.address);
-                console.log(myCustomer.password);
+            .then((myCustomer) => {
                 done();
             });
+    });
+    it('should save, provide an ID, and then get via ID', (done) => {
+        let data = ['Ronald McDonald', 'rm@mcds.com', 'everywhere', 'yum'];
+        let c1 = new Customer(...data);
+        c1.save()
+            .then((result) => {
+                let customer_id = result.customer_id;
+                Customer.get(customer_id)
+                    .then((c2) => {
+                        expect(c2.name).to.equal(data[0]);
+                        expect(c2.email).to.equal(data[1]);
+                        expect(c2.address).to.equal(data[2]);
+
+                        done();
+                    }).catch(console.log);
+            })
+    });
+    it('should have a customer_id when we retrieve from db', (done) => {
+        let data = ['Ronald McDonald', 'rm@mcds.com', 'everywhere', 'yum'];
+        let c1 = new Customer(...data);
+        c1.save()
+            .then((result) => {
+                let customer_id = result.customer_id;
+                Customer.get(customer_id)
+                    .then((c2) => {
+                        expect(c2.customer_id).to.equal(customer_id);
+                        done();
+                    })
+                    .catch(console.log);
+            })
+    });
+
+    it('should update a user and retain the new values', (done) => {
+
+
+
+        // done();
     });
 });

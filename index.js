@@ -8,21 +8,24 @@ class Customer {
         this.password = password;
     }
     save() {
-        return db.query(`
+        return db.one(`
         insert into customers
         (name, email, address, password)
         values
-        ('${this.name}', '${this.email}', '${this.address}', '${this.password}');
+        ('${this.name}', '${this.email}', '${this.address}', '${this.password}')
+        returning customer_id;
         `);
     }
-    get(id) {
+    static get(id) {
         return db.one(`
-            select name, email, address from customers where customer_id=${id};
+            select customer_id, name, email, address from customers where customer_id=${id};
         `).then((result) => {
-            this.name = result.name;
-            this.email = result.email;
-            this.address = result.address;
-            return result;
+            let c = new Customer();
+            c.customer_id =result.customer_id;
+            c.name = result.name;
+            c.email = result.email;
+            c.address = result.address;
+            return c;
         })
     }
 }
