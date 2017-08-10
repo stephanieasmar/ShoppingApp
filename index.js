@@ -8,13 +8,25 @@ class Customer {
         this.password = password;
     }
     save() {
-        return db.one(`
-        insert into customers
-        (name, email, address, password)
-        values
-        ('${this.name}', '${this.email}', '${this.address}', '${this.password}')
-        returning customer_id;
-        `);
+
+        if (this.customer_id) {
+            return db.one(`
+                update customers
+                set
+                    name=${this.name},
+                    email=${this.email},
+                    address=${this.address},
+                where customer_id=${this.customer_id}
+            `);
+        }   else {
+            return db.one(`
+                insert into customers
+                (name, email, address, password)
+                values
+                ('${this.name}', '${this.email}', '${this.address}', '${this.password}')
+                returning customer_id;
+            `);
+        }
     }
     static get(id) {
         return db.one(`

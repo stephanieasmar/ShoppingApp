@@ -38,23 +38,25 @@ describe('Customers', () => {
     });
     it('should have a customer_id when we retrieve from db', (done) => {
         let data = ['Ronald McDonald', 'rm@mcds.com', 'everywhere', 'yum'];
+        let newName = 'oakley';
         let c1 = new Customer(...data);
         c1.save()
-            .then((result) => {
-                let customer_id = result.customer_id;
-                Customer.get(customer_id)
-                    .then((c2) => {
-                        expect(c2.customer_id).to.equal(customer_id);
-                        done();
-                    })
-                    .catch(console.log);
-            })
-    });
+            .then((resultFromSave1) => {
+                c1.customer_id = resultFromSave1.customer_id
+                c1.name = newName;
+                c1.save()
+                    .then((resultFromSave2) => {
 
-    it('should update a user and retain the new values', (done) => {
+                        let customer_id = resultFromSave1.customer_id;
+                        Customer.get(customer_id)
+                            .then((c2) => {
+                                expect(c2.name).to.equal(newName);
 
-
-
-        // done();
+                                done();
+                            })
+                            .catch(console.log);
+                    }).catch(console.log);
+                    
+            }).catch(console.log);
     });
 });
